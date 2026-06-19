@@ -18,12 +18,24 @@ app.use(cors({ origin: env.frontendOrigin, credentials: true }));
 app.use(express.json({ limit: "2mb" }));
 app.use(morgan(env.nodeEnv === "production" ? "combined" : "dev"));
 
+app.get("/", (req, res) => {
+  res.status(200).json({
+    ok: true,
+    service: "verifyx-backend",
+    docs: "/api/health",
+  });
+});
+
+app.get("/favicon.ico", (req, res) => {
+  res.status(204).end();
+});
+
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
     service: "verifyx-backend",
     storage: store.state.mode,
-    auth: "metamask-frontend-only"
+    auth: "metamask-frontend-only",
   });
 });
 
@@ -41,7 +53,7 @@ app.use((error, req, res, next) => {
   console.error(error);
   res.status(error.status || 500).json({
     success: false,
-    error: error.message || "Internal server error"
+    error: error.message || "Internal server error",
   });
 });
 
